@@ -531,3 +531,4 @@
         - "Pending"
         - "DealerWon"
         - "PlayerWon"
+        - "Tie"
