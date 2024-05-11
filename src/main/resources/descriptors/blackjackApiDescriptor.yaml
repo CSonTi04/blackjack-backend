@@ -1,534 +1,264 @@
-
-"openapi": "3.0.0"
-"info":
-  "title": "Blackjack REST API"
-  "description": "REST API for a Blackjack game with a single player and dealer"
-  "version": "1.0"
-"servers":
-  -
-    "url": "https://example.com/api"
-"tags":
-  -
-    "name": "Game"
-    "description": "Operations related to managing Blackjack games"
-  -
-    "name": "Player"
-    "description": "Operations related to managing player actions"
-  -
-    "name": "Dealer"
-    "description": "Operations related to managing dealer actions"
-  -
-    "name": "Cards"
-    "description": "Operations related to managing player and dealer cards"
-"paths":
-  "/games/{playerId}":
-    "post":
-      "summary": "Create a new Blackjack game"
-      "description": "Creates a new Blackjack game instance for the specified player."
-      "tags":
-        - "Game"
-      "parameters":
-        -
-          "name": "playerId"
-          "in": "path"
-          "required": true
-          "schema":
-            "type": "string"
-          "description": "The unique identifier of the player."
-      "responses":
+openapi: 3.0.1
+info:
+  title: Blackjack REST API
+  description: REST API for a Blackjack game with a single player and dealer
+  version: "1.0"
+servers:
+  - url: https://example.com/api
+tags:
+  - name: Game
+    description: Operations related to managing Blackjack games
+  - name: Player
+    description: Operations related to managing player actions
+  - name: Dealer
+    description: Operations related to managing dealer actions
+  - name: Cards
+    description: Operations related to managing player and dealer cards
+paths:
+  /games/{playerId}:
+    post:
+      tags:
+        - Game
+      summary: Create a new Blackjack game
+      description: |
+        Creates a new Blackjack game instance for the specified player.
+      parameters:
+        - name: playerId
+          in: path
+          description: The unique identifier of the player.
+          required: true
+          schema:
+            type: string
+      responses:
         "201":
-          "description": "Created"
-          "content":
-            "application/json":
-              "schema":
-                "type": "object"
-                "properties":
-                  "gameId":
-                    "type": "string"
-                  "state":
-                    "type": "string"
-                    "enum":
-                      - "Start"
-                      - "Deal"
-                      - "PlayerTurn"
-                      - "DealerTurn"
-                      - "Evaluate"
-                      - "End"
-                  "evaluation":
-                    "type": "object"
-                    "properties":
-                      "outcome":
-                        "type": "string"
-                        "enum":
-                          - "Pending"
-                          - "DealerWon"
-                          - "PlayerWon"
-                      "playerHandValue":
-                        "type": "integer"
-                      "dealerHandValue":
-                        "type": "integer"
-                  "player":
-                    "type": "object"
-                    "properties":
-                      "playerId":
-                        "type": "string"
-                      "chips":
-                        "type": "integer"
-  "/games/{gameId}":
-    "get":
-      "summary": "Retrieve details about a game"
-      "description": "Retrieves details about an existing Blackjack game."
-      "tags":
-        - "Game"
-      "parameters":
-        -
-          "name": "gameId"
-          "in": "path"
-          "required": true
-          "schema":
-            "type": "string"
-          "description": "The unique identifier of the game."
-      "responses":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameResponse'
+  /games/{gameId}:
+    get:
+      tags:
+        - Game
+      summary: Retrieve details about a game
+      description: |
+        Retrieves details about an existing Blackjack game.
+      parameters:
+        - name: gameId
+          in: path
+          description: The unique identifier of the game.
+          required: true
+          schema:
+            type: string
+      responses:
         "200":
-          "description": "OK"
-          "content":
-            "application/json":
-              "schema":
-                "type": "object"
-                "properties":
-                  "gameId":
-                    "type": "string"
-                  "state":
-                    "type": "string"
-                    "enum":
-                      - "Start"
-                      - "Deal"
-                      - "PlayerTurn"
-                      - "DealerTurn"
-                      - "Evaluate"
-                      - "End"
-                  "evaluation":
-                    "type": "object"
-                    "properties":
-                      "outcome":
-                        "type": "string"
-                        "enum":
-                          - "Pending"
-                          - "DealerWon"
-                          - "PlayerWon"
-                      "playerHandValue":
-                        "type": "integer"
-                      "dealerHandValue":
-                        "type": "integer"
-                  "player":
-                    "type": "object"
-                    "properties":
-                      "playerId":
-                        "type": "string"
-                      "chips":
-                        "type": "integer"
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameResponse'
         "404":
-          "description": "Not Found"
-  "/games/{gameId}/player/bet":
-    "put":
-      "summary": "Place a bet"
-      "description": "Player places a bet on the current game."
-      "tags":
-        - "Player"
-      "parameters":
-        -
-          "name": "gameId"
-          "in": "path"
-          "required": true
-          "schema":
-            "type": "string"
-          "description": "The unique identifier of the game."
-        -
-          "name": "amount"
-          "in": "query"
-          "required": true
-          "schema":
-            "type": "integer"
-          "description": "The amount of the bet (integer)."
-      "responses":
+          description: Not Found
+          content: {}
+  /games/{gameId}/player/bet:
+    put:
+      tags:
+        - Player
+      summary: Place a bet
+      description: |
+        Player places a bet on the current game.
+      parameters:
+        - name: gameId
+          in: path
+          description: The unique identifier of the game.
+          required: true
+          schema:
+            type: string
+        - name: amount
+          in: query
+          description: The amount of the bet (integer).
+          required: true
+          schema:
+            type: integer
+      responses:
         "200":
-          "description": "OK"
-          "content":
-            "application/json":
-              "schema":
-                "type": "object"
-                "properties":
-                  "gameId":
-                    "type": "string"
-                  "state":
-                    "type": "string"
-                    "enum":
-                      - "Start"
-                      - "Deal"
-                      - "PlayerTurn"
-                      - "DealerTurn"
-                      - "Evaluate"
-                      - "End"
-                  "evaluation":
-                    "type": "object"
-                    "properties":
-                      "outcome":
-                        "type": "string"
-                        "enum":
-                          - "Pending"
-                          - "DealerWon"
-                          - "PlayerWon"
-                      "playerHandValue":
-                        "type": "integer"
-                      "dealerHandValue":
-                        "type": "integer"
-                  "player":
-                    "type": "object"
-                    "properties":
-                      "playerId":
-                        "type": "string"
-                      "chips":
-                        "type": "integer"
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameResponse'
         "400":
-          "description": "Bad Request"
-  "/games/{gameId}/player/hit":
-    "post":
-      "summary": "Player requests another card"
-      "description": "Player requests to receive another card during their turn."
-      "tags":
-        - "Player"
-      "parameters":
-        -
-          "name": "gameId"
-          "in": "path"
-          "required": true
-          "schema":
-            "type": "string"
-          "description": "The unique identifier of the game."
-      "responses":
+          description: Bad Request
+          content: {}
+  /games/{gameId}/player/hit:
+    post:
+      tags:
+        - Player
+      summary: Player requests another card
+      description: |
+        Player requests to receive another card during their turn.
+      parameters:
+        - name: gameId
+          in: path
+          description: The unique identifier of the game.
+          required: true
+          schema:
+            type: string
+      responses:
         "200":
-          "description": "OK"
-          "content":
-            "application/json":
-              "schema":
-                "type": "object"
-                "properties":
-                  "gameId":
-                    "type": "string"
-                  "state":
-                    "type": "string"
-                    "enum":
-                      - "Start"
-                      - "Deal"
-                      - "PlayerTurn"
-                      - "DealerTurn"
-                      - "Evaluate"
-                      - "End"
-                  "evaluation":
-                    "type": "object"
-                    "properties":
-                      "outcome":
-                        "type": "string"
-                        "enum":
-                          - "Pending"
-                          - "DealerWon"
-                          - "PlayerWon"
-                      "playerHandValue":
-                        "type": "integer"
-                      "dealerHandValue":
-                        "type": "integer"
-                  "player":
-                    "type": "object"
-                    "properties":
-                      "playerId":
-                        "type": "string"
-                      "chips":
-                        "type": "integer"
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameResponse'
         "400":
-          "description": "Bad Request"
-  "/games/{gameId}/player/stand":
-    "post":
-      "summary": "Player decides to stand"
-      "description": "Player decides to stand with their current hand, ending their turn."
-      "tags":
-        - "Player"
-      "parameters":
-        -
-          "name": "gameId"
-          "in": "path"
-          "required": true
-          "schema":
-            "type": "string"
-          "description": "The unique identifier of the game."
-      "responses":
+          description: Bad Request
+          content: {}
+  /games/{gameId}/player/stand:
+    post:
+      tags:
+        - Player
+      summary: Player decides to stand
+      description: |
+        Player decides to stand with their current hand, ending their turn.
+      parameters:
+        - name: gameId
+          in: path
+          description: The unique identifier of the game.
+          required: true
+          schema:
+            type: string
+      responses:
         "200":
-          "description": "OK"
-          "content":
-            "application/json":
-              "schema":
-                "type": "object"
-                "properties":
-                  "gameId":
-                    "type": "string"
-                  "state":
-                    "type": "string"
-                    "enum":
-                      - "Start"
-                      - "Deal"
-                      - "PlayerTurn"
-                      - "DealerTurn"
-                      - "Evaluate"
-                      - "End"
-                  "evaluation":
-                    "type": "object"
-                    "properties":
-                      "outcome":
-                        "type": "string"
-                        "enum":
-                          - "Pending"
-                          - "DealerWon"
-                          - "PlayerWon"
-                      "playerHandValue":
-                        "type": "integer"
-                      "dealerHandValue":
-                        "type": "integer"
-                  "player":
-                    "type": "object"
-                    "properties":
-                      "playerId":
-                        "type": "string"
-                      "chips":
-                        "type": "integer"
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameResponse'
         "400":
-          "description": "Bad Request"
-  "/games/{gameId}/dealer/draw":
-    "post":
-      "summary": "Dealer draws a card"
-      "description": "Simulates the dealer drawing a card during their turn."
-      "tags":
-        - "Dealer"
-      "parameters":
-        -
-          "name": "gameId"
-          "in": "path"
-          "required": true
-          "schema":
-            "type": "string"
-          "description": "The unique identifier of the game."
-      "responses":
+          description: Bad Request
+          content: {}
+  /games/{gameId}/dealer/draw:
+    post:
+      tags:
+        - Dealer
+      summary: Dealer draws a card
+      description: |
+        Simulates the dealer drawing a card during their turn.
+      parameters:
+        - name: gameId
+          in: path
+          description: The unique identifier of the game.
+          required: true
+          schema:
+            type: string
+      responses:
         "200":
-          "description": "OK"
-          "content":
-            "application/json":
-              "schema":
-                "type": "object"
-                "properties":
-                  "gameId":
-                    "type": "string"
-                  "state":
-                    "type": "string"
-                    "enum":
-                      - "Start"
-                      - "Deal"
-                      - "PlayerTurn"
-                      - "DealerTurn"
-                      - "Evaluate"
-                      - "End"
-                  "evaluation":
-                    "type": "object"
-                    "properties":
-                      "outcome":
-                        "type": "string"
-                        "enum":
-                          - "Pending"
-                          - "DealerWon"
-                          - "PlayerWon"
-                      "playerHandValue":
-                        "type": "integer"
-                      "dealerHandValue":
-                        "type": "integer"
-                  "player":
-                    "type": "object"
-                    "properties":
-                      "playerId":
-                        "type": "string"
-                      "chips":
-                        "type": "integer"
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameResponse'
         "400":
-          "description": "Bad Request"
-  "/games/{gameId}/evaluate":
-    "post":
-      "summary": "Evaluate game"
-      "description": "Evaluates the game to determine the winner and handle payouts."
-      "tags":
-        - "Game"
-      "parameters":
-        -
-          "name": "gameId"
-          "in": "path"
-          "required": true
-          "schema":
-            "type": "string"
-          "description": "The unique identifier of the game."
-      "responses":
+          description: Bad Request
+          content: {}
+  /games/{gameId}/evaluate:
+    post:
+      tags:
+        - Game
+      summary: Evaluate game
+      description: |
+        Evaluates the game to determine the winner and handle payouts.
+      parameters:
+        - name: gameId
+          in: path
+          description: The unique identifier of the game.
+          required: true
+          schema:
+            type: string
+      responses:
         "200":
-          "description": "OK"
-          "content":
-            "application/json":
-              "schema":
-                "type": "object"
-                "properties":
-                  "gameId":
-                    "type": "string"
-                  "state":
-                    "type": "string"
-                    "enum":
-                      - "Start"
-                      - "Deal"
-                      - "PlayerTurn"
-                      - "DealerTurn"
-                      - "Evaluate"
-                      - "End"
-                  "evaluation":
-                    "type": "object"
-                    "properties":
-                      "outcome":
-                        "type": "string"
-                        "enum":
-                          - "Pending"
-                          - "DealerWon"
-                          - "PlayerWon"
-                      "playerHandValue":
-                        "type": "integer"
-                      "dealerHandValue":
-                        "type": "integer"
-                  "player":
-                    "type": "object"
-                    "properties":
-                      "playerId":
-                        "type": "string"
-                      "chips":
-                        "type": "integer"
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameResponse'
         "400":
-          "description": "Bad Request"
-"components":
-  "schemas":
-    "GameResponse":
-      "type": "object"
-      "properties":
-        "gameId":
-          "type": "string"
-        "state":
-          "type": "string"
-          "enum":
-            - "Start"
-            - "Deal"
-            - "PlayerTurn"
-            - "DealerTurn"
-            - "Evaluate"
-            - "End"
-        "evaluation":
-          "type": "object"
-          "properties":
-            "outcome":
-              "type": "string"
-              "enum":
-                - "Pending"
-                - "DealerWon"
-                - "PlayerWon"
-            "playerHandValue":
-              "type": "integer"
-            "dealerHandValue":
-              "type": "integer"
-        "player":
-          "type": "object"
-          "properties":
-            "playerId":
-              "type": "string"
-            "chips":
-              "type": "integer"
-    "PlayerInfo":
-      "type": "object"
-      "properties":
-        "playerId":
-          "type": "string"
-        "chips":
-          "type": "integer"
-    "Card":
-      "type": "object"
-      "properties":
-        "suit":
-          "type": "string"
-          "enum":
-            - "Hearts"
-            - "Diamonds"
-            - "Clubs"
-            - "Spades"
-        "value":
-          "type": "string"
-          "enum":
-            - "Two"
-            - "Three"
-            - "Four"
-            - "Five"
-            - "Six"
-            - "Seven"
-            - "Eight"
-            - "Nine"
-            - "Ten"
-            - "Jack"
-            - "Queen"
-            - "King"
-            - "Ace"
-    "Suit":
-      "type": "string"
-      "enum":
-        - "Hearts"
-        - "Diamonds"
-        - "Clubs"
-        - "Spades"
-    "Value":
-      "type": "string"
-      "enum":
-        - "Two"
-        - "Three"
-        - "Four"
-        - "Five"
-        - "Six"
-        - "Seven"
-        - "Eight"
-        - "Nine"
-        - "Ten"
-        - "Jack"
-        - "Queen"
-        - "King"
-        - "Ace"
-    "GameState":
-      "type": "string"
-      "enum":
-        - "Start"
-        - "Deal"
-        - "PlayerTurn"
-        - "DealerTurn"
-        - "Evaluate"
-        - "End"
-    "GameEvaluation":
-      "type": "object"
-      "properties":
-        "outcome":
-          "type": "string"
-          "enum":
-            - "Pending"
-            - "DealerWon"
-            - "PlayerWon"
-        "playerHandValue":
-          "type": "integer"
-        "dealerHandValue":
-          "type": "integer"
-    "GameOutcome":
-      "type": "string"
-      "enum":
-        - "Pending"
-        - "DealerWon"
-        - "PlayerWon"
-        - "Tie"
+          description: Bad Request
+          content: {}
+components:
+  schemas:
+    GameResponse:
+      type: object
+      properties:
+        gameId:
+          type: string
+        state:
+          $ref: '#/components/schemas/GameState'
+        evaluation:
+          $ref: '#/components/schemas/GameEvaluation'
+        player:
+          $ref: '#/components/schemas/PlayerInfo'
+    PlayerInfo:
+      type: object
+      properties:
+        playerId:
+          type: string
+        chips:
+          type: integer
+    Card:
+      type: object
+      properties:
+        suit:
+          $ref: '#/components/schemas/Suit'
+        value:
+          $ref: '#/components/schemas/Value'
+    Suit:
+      type: string
+      enum:
+        - Hearts
+        - Diamonds
+        - Clubs
+        - Spades
+    Value:
+      type: string
+      enum:
+        - Two
+        - Three
+        - Four
+        - Five
+        - Six
+        - Seven
+        - Eight
+        - Nine
+        - Ten
+        - Jack
+        - Queen
+        - King
+        - Ace
+    GameState:
+      type: string
+      enum:
+        - Start
+        - Deal
+        - PlayerTurn
+        - DealerTurn
+        - Evaluate
+        - End
+    GameEvaluation:
+      type: object
+      properties:
+        outcome:
+          $ref: '#/components/schemas/GameOutcome'
+        playerHandValue:
+          type: integer
+        dealerHandValue:
+          type: integer
+    GameOutcome:
+      type: string
+      enum:
+        - Pending
+        - DealerWon
+        - PlayerWon
+        - Tie
+x-original-swagger-version: "2.0"
