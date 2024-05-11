@@ -17,6 +17,7 @@
         <java.version>21</java.version>
         <openapi-generator-version>7.5.0</openapi-generator-version>
         <default.package>com.cst04.blackjack</default.package>
+        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
         <google.gson.version>2.10.1</google.gson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <okio.version>3.9.0</okio.version>
@@ -26,6 +27,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -79,6 +88,14 @@
                             <generatorName>java</generatorName>
                             <configOptions>
                                 <generatorName>spring</generatorName>
+                                <dateLibrary>java8</dateLibrary>
+                                <useSpringController>true</useSpringController>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
+                                <delegatePattern>true</delegatePattern>
+                                <useOptional>false</useOptional>
+                                <sortModelPropertiesByRequiredFlag>true</sortModelPropertiesByRequiredFlag>
+                                <sortParamsByRequiredFlag>true</sortParamsByRequiredFlag>
                                 <jakarta>true</jakarta>
                                 <useJakartaEe>true</useJakartaEe>
                                 <useSpringBoot3>true</useSpringBoot3>
